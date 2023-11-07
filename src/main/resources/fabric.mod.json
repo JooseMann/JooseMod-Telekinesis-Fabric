@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "joosemod-telekinesis-fabric",
+	"version": "${version}",
+	"name": "JooseMod: Telekinesis, Experience and Mastery",
+	"description": "Mod made by JooseMann! Adds Telekinesis, and the Experience / Mastery enchantments.\nTelekinesis: Blocks mined automatically get teleported to you. Can be toggled on and off with a hotkey (see controls).\nExperience: Enchantment that increases the experience gained from mining blocks.\nMastery: Enchantment that increases experience gained from killing mobs.\n\nEnjoy!! :)",
+	"authors": [
+		"JooseMann"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/joosemod-telekinesis-fabric/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.joosemann.telekinesis.JooseModTelekinesisFabric"
+		],
+		"client": [
+			"net.joosemann.telekinesis.JooseModTelekinesisClient"
+		],
+		"fabric-datagen": [
+			"net.joosemann.telekinesis.JooseModTelekinesisFabricDataGenerator"
+		]
+	},
+	"mixins": [
+		"joosemod-telekinesis-fabric.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.14.24",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
