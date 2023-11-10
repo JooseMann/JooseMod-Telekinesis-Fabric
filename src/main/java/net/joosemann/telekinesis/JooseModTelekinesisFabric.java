@@ -6,7 +6,10 @@ import net.fabricmc.fabric.api.event.client.player.ClientPickBlockApplyCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerLoginConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.joosemann.telekinesis.event.AttackEntityHandler;
+import net.joosemann.telekinesis.event.PlayerLoginSetTelekinesis;
 import net.joosemann.telekinesis.event.TelekinesisBlockBreak;
 import net.joosemann.telekinesis.event.TelekinesisItemDrop;
 import net.joosemann.telekinesis.networking.ModMessages;
@@ -34,6 +37,7 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 		// PlayerBlockBreakEvents.AFTER.register(new Telekinesis());
 		PlayerBlockBreakEvents.BEFORE.register(new TelekinesisBlockBreak());
 		ServerEntityEvents.ENTITY_LOAD.register(new TelekinesisItemDrop());
+		ServerPlayConnectionEvents.JOIN.register(new PlayerLoginSetTelekinesis());
 
 		ModMessages.registerC2SPackets();
 	}

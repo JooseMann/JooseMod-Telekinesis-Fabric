@@ -16,6 +16,10 @@ public class TelekinesisC2SPacket {
 
     public static NbtCompound playerNbt;
 
+    public static void onJoin(MinecraftServer server, ServerPlayerEntity player) {
+        playerNbt = ((IEntityDataSaver) player).getPersistentData();
+    }
+
     public static void receive(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler,
                                PacketByteBuf buf, PacketSender sender) {
 
