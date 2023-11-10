@@ -4,13 +4,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.joosemann.telekinesis.JooseModTelekinesisFabric;
 import net.joosemann.telekinesis.networking.packet.TelekinesisC2SPacket;
-import net.joosemann.telekinesis.util.KeyInputHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Identifier;
 
 public class TelekinesisHudOverlay implements HudRenderCallback {
@@ -19,7 +15,6 @@ public class TelekinesisHudOverlay implements HudRenderCallback {
 
     @Override
     public void onHudRender(DrawContext drawContext, float tickDelta) {
-        // TODO: Figure out where to put the icon, and toggle it based on the player's nbt data (refer to same tutorial as before)
 
         MinecraftClient client = MinecraftClient.getInstance();
 
