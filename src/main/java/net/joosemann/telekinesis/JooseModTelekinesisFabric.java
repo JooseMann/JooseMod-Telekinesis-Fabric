@@ -2,6 +2,14 @@ package net.joosemann.telekinesis;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.event.client.player.ClientPickBlockApplyCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.joosemann.telekinesis.event.AttackEntityHandler;
+import net.joosemann.telekinesis.event.TelekinesisBlockBreak;
+import net.joosemann.telekinesis.event.TelekinesisItemDrop;
+import net.joosemann.telekinesis.networking.ModMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +28,13 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("Hello Fabric world!");
+		LOGGER.info("JooseMod (Telekinesis) has been activated!");
+
+		AttackEntityCallback.EVENT.register(new AttackEntityHandler());
+		// PlayerBlockBreakEvents.AFTER.register(new Telekinesis());
+		PlayerBlockBreakEvents.BEFORE.register(new TelekinesisBlockBreak());
+		ServerEntityEvents.ENTITY_LOAD.register(new TelekinesisItemDrop());
+
+		ModMessages.registerC2SPackets();
 	}
 }
