@@ -16,27 +16,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class TelekinesisBlockBreak implements PlayerBlockBreakEvents.Before {
-    /*Event<Telekinesis> EVENT = EventFactory.createArrayBacked(Telekinesis.class,
-            (listeners) -> (player) -> {
-                for (Telekinesis listener : listeners) {
-                    ActionResult result = listener.interact(player)
-                }
-            });*/
-    /*@Override
-    public void afterBlockBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
-
-
-        player.sendMessage(Text.literal("Block Broken!"));
-
-
-
-        if (blockEntity != null) {
-            BlockPos blockPos = blockEntity.getPos();
-            blockPos = player.getBlockPos();
-        }
-
-        // pos = player.getBlockPos();
-    }*/
 
     public static boolean shouldDropItem = false;
     public static boolean blockBroken = false;
@@ -57,6 +36,7 @@ public class TelekinesisBlockBreak implements PlayerBlockBreakEvents.Before {
         int matchingSlot = player.getInventory().getOccupiedSlotWithRoomForStack(itemStacks.get(0));
 
         // If there is a matching slot to put the itemStack into, then do so
+        // NOTE: This uses a local variable that is not preserved between sessions, may cause a bug where telekinesis gets desynced...?
         if (KeyInputHandler.telekinesisIsActive && matchingSlot != -1) {
             itemStacks.forEach(itemStack -> player.getInventory().insertStack(matchingSlot, itemStack));
         }
