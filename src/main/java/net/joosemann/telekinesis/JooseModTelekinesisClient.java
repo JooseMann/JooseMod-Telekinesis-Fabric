@@ -9,6 +9,8 @@ import net.joosemann.telekinesis.util.KeyInputHandler;
 public class JooseModTelekinesisClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        // Register things that are client-side only
+
         KeyInputHandler.register();
         ModMessages.registerS2CPackets();
 

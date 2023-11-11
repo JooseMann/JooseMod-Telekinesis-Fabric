@@ -15,6 +15,7 @@ public abstract class ModEntityDataSaverMixin implements IEntityDataSaver {
 
     @Override
     public NbtCompound getPersistentData() {
+        // Initialize persistentData if it is not already
         if (this.persistentData == null) {
             this.persistentData = new NbtCompound();
         }
@@ -23,6 +24,7 @@ public abstract class ModEntityDataSaverMixin implements IEntityDataSaver {
 
     @Inject(method = "writeNbt", at = @At("HEAD"))
     protected void injectWriteMethod(NbtCompound nbt, CallbackInfoReturnable info) {
+        // Write custom nbt data into persistentData
         if (persistentData != null) {
             nbt.put("telekinesis.joosemann_data", persistentData);
         }
@@ -30,6 +32,7 @@ public abstract class ModEntityDataSaverMixin implements IEntityDataSaver {
 
     @Inject(method = "readNbt", at = @At("HEAD"))
     protected void injectReadMethod(NbtCompound nbt, CallbackInfo info) {
+        // Retrieve custom nbt data from persistentData
         if (nbt.contains("telekinesis.joosemann_data", 10)) {
             persistentData = nbt.getCompound("telekinesis.joosemann_data");
         }

@@ -15,24 +15,21 @@ public class TelekinesisHudOverlay implements HudRenderCallback {
 
     @Override
     public void onHudRender(DrawContext drawContext, float tickDelta) {
+        // Draw the telekinesis icon on the screen, if it is enabled
 
         MinecraftClient client = MinecraftClient.getInstance();
 
-        if (TelekinesisC2SPacket.playerNbt == null || !TelekinesisC2SPacket.playerNbt.contains("telekinesis-enabled")) { return; }
+        // If telekinesis is not enabled, return
+        if (TelekinesisC2SPacket.playerNbt == null || !TelekinesisC2SPacket.playerNbt.contains("telekinesis-enabled") || client == null) { return; }
 
-        int x = 0;
-        int y = 0;
+        // Get the base x and y positions
+        int width = client.getWindow().getScaledWidth();
 
+        int x = width / 2;
+        // height is the same as y, so just replaced height with y.
+        int y = client.getWindow().getScaledHeight();
 
-        if (client != null) {
-            int width = client.getWindow().getScaledWidth();
-            int height = client.getWindow().getScaledHeight();
-
-            x = width / 2;
-            y = height;
-
-        }
-
+        // Draw the icon itself, with x and y positions so that it is to the right of the hotbar
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, TELEKINESIS_ICON);

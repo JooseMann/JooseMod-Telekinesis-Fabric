@@ -23,16 +23,16 @@ public class AttackEntityHandler implements ServerEntityCombatEvents.AfterKilled
     @Override
     public void afterKilledOtherEntity(ServerWorld world, Entity entity, LivingEntity killedEntity) {
         // If the player's weapon has the mastery enchantment, add a few experience orbs
-        // Refer to TelekinesisBlockBreak.beforeBlockBreak() for detailed comments
         if (entity instanceof PlayerEntity player) {
+            // Get the level of the enchantment, if there is none, then returns 0
             int enchantmentLevel = EnchantmentHelper.getLevel
                     (Registries.ENCHANTMENT.get(JooseModTelekinesisFabric.masteryIdentifier), player.getMainHandStack());
 
             if (enchantmentLevel != 0) {
+                // Get the extra xp to drop
                 int xpToDrop = (int) Math.ceil(killedEntity.getXpToDrop() * (0.25 * enchantmentLevel));
 
-                JooseModTelekinesisFabric.LOGGER.info("Xp to drop: " + killedEntity.getXpToDrop());
-                JooseModTelekinesisFabric.LOGGER.info("Enchantment level: " + xpToDrop);
+                // Spawn new experience into the world
                 Vec3d enemyPos = killedEntity.getPos();
                 world.spawnEntity(new ExperienceOrbEntity(world, enemyPos.x, enemyPos.y, enemyPos.z, xpToDrop));
             }

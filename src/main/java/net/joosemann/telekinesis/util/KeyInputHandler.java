@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.joosemann.telekinesis.networking.ModMessages;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class KeyInputHandler {
@@ -19,6 +18,7 @@ public class KeyInputHandler {
 
     public static void registerKeyInputs() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            // If the telekinesis toggle button was pressed, flip the nbt data and telekinesisIsActive via a C2S packet
             if (toggleTelekinesis.wasPressed() && client.player != null) {
                 ClientPlayNetworking.send(ModMessages.TELEKINESIS_ID, PacketByteBufs.create());
             }

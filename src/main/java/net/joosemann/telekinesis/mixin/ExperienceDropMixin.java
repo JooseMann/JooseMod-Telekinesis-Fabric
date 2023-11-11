@@ -18,12 +18,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ExperienceDropMixin {
     @Inject(method = "dropExperienceWhenMined", at = @At("HEAD"))
     public void experienceEnchantmentDrops(ServerWorld world, BlockPos pos, ItemStack tool, IntProvider experience, CallbackInfo info) {
+        // If the player's tool has the experience enchantment, add extra experience to the world
+        // See AttackEntityHandler for details
         int enchantmentLevel = EnchantmentHelper.getLevel(Registries.ENCHANTMENT.get(JooseModTelekinesisFabric.experienceIdentifier), tool);
         if (enchantmentLevel != 0) {
 
-            int chosenXp = (int) (Math.ceil((experience.get(world.random) - experience.getMin()) * 0.33) + ((enchantmentLevel * 2) - 1)); // OR Just + enchantmentLevel
-
-            JooseModTelekinesisFabric.LOGGER.info("chosenXp: " + chosenXp);
+            // This is a slightly different calculation than in AttackEntityHandler
+            // experience.get(world.random) does the same thing as getXpToDrop() (in the other class)
+            int chosenXp = (int) (Math.ceil(experience.get(world.random) * 0.25 * enchantmentLevel));
 
             world.spawnEntity(new ExperienceOrbEntity(world, pos.getX(), pos.getY(), pos.getZ(), chosenXp));
         }

@@ -24,15 +24,9 @@ import org.slf4j.LoggerFactory;
 public class JooseModTelekinesisFabric implements ModInitializer {
 
 	public static final String MOD_ID = "joosemod-telekinesis-fabric";
-
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-
 	public static Identifier experienceIdentifier = new Identifier("joosemod", "experience");
 	public static Identifier masteryIdentifier = new Identifier("joosemod", "mastery");
-
 
 	@Override
 	public void onInitialize() {
@@ -42,14 +36,16 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 
 		LOGGER.info("JooseMod (Telekinesis) has been activated!");
 
+		// Initialize Events
 		ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(new AttackEntityHandler());
-		// PlayerBlockBreakEvents.AFTER.register(new Telekinesis());
 		PlayerBlockBreakEvents.BEFORE.register(new TelekinesisBlockBreak());
 		ServerEntityEvents.ENTITY_LOAD.register(new TelekinesisItemDrop());
 		ServerPlayConnectionEvents.JOIN.register(new PlayerLoginSetTelekinesis());
 
+		// Initialize C2S packets
 		ModMessages.registerC2SPackets();
 
+		// Register custom enchantments
 		Registry.register(Registries.ENCHANTMENT, experienceIdentifier, new ExperienceEnchantment
 				(Enchantment.Rarity.UNCOMMON, EnchantmentTarget.DIGGER, new EquipmentSlot[] {EquipmentSlot.MAINHAND} ));
 		Registry.register(Registries.ENCHANTMENT, masteryIdentifier, new MasteryEnchantment

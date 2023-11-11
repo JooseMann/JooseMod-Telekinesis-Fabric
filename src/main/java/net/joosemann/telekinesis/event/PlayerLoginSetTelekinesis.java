@@ -18,6 +18,7 @@ public class PlayerLoginSetTelekinesis implements ServerPlayConnectionEvents.Joi
 
     @Override
     public void onPlayReady(ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) {
-        TelekinesisC2SPacket.onJoin(server, handler.player);
+        // Set up telekinesis persistent (nbt) data, so that it is preserved across sessions
+        TelekinesisC2SPacket.onJoin(handler.player);
     }
 }
