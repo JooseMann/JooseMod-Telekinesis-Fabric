@@ -1,17 +1,13 @@
 package net.joosemann.telekinesis.event;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.joosemann.telekinesis.JooseModTelekinesisFabric;
 import net.joosemann.telekinesis.networking.packet.TelekinesisC2SPacket;
 import net.joosemann.telekinesis.util.KeyInputHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -50,16 +46,6 @@ public class TelekinesisBlockBreak implements PlayerBlockBreakEvents.Before {
 
         // List of all items that are dropped by the blocks
         List<ItemStack> itemStacks = Block.getDroppedStacks(state, (ServerWorld) world, pos, blockEntity);
-
-
-        // Level of the experience enchantment in the player's hand
-        int enchantmentLevel = EnchantmentHelper.getLevel
-                (Registries.ENCHANTMENT.get(JooseModTelekinesisFabric.experienceIdentifier), player.getMainHandStack());
-
-        // If there is an enchantment (0 is no enchantment), then add a few extra experience orbs
-        if (enchantmentLevel != 0) {
-            world.spawnEntity(new ExperienceOrbEntity(world, pos.getX(), pos.getY(), pos.getZ(), enchantmentLevel));
-        }
 
         // Logic for Telekinesis
 

@@ -1,4 +1,6 @@
 {
+  "enchantment.joosemod.experience": "Experience",
+  "enchantment.joosemod.mastery": "Mastery",
   "key.joosemod-telekinesis.telekinesis": "Toggle Telekinesis",
   "key.category.joosemod-telekinesis.joosemod": "JooseMod (Telekinesis)"
 }

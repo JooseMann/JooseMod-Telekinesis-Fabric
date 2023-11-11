@@ -1,12 +1,12 @@
 package net.joosemann.telekinesis;
 
 import net.fabricmc.api.ModInitializer;
-
+import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.joosemann.telekinesis.enchantments.ExperienceEnchantment;
+import net.joosemann.telekinesis.enchantments.MasteryEnchantment;
 import net.joosemann.telekinesis.event.AttackEntityHandler;
 import net.joosemann.telekinesis.event.PlayerLoginSetTelekinesis;
 import net.joosemann.telekinesis.event.TelekinesisBlockBreak;
@@ -31,6 +31,7 @@ public class JooseModTelekinesisFabric implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static Identifier experienceIdentifier = new Identifier("joosemod", "experience");
+	public static Identifier masteryIdentifier = new Identifier("joosemod", "mastery");
 
 
 	@Override
@@ -41,7 +42,7 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 
 		LOGGER.info("JooseMod (Telekinesis) has been activated!");
 
-		AttackEntityCallback.EVENT.register(new AttackEntityHandler());
+		ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(new AttackEntityHandler());
 		// PlayerBlockBreakEvents.AFTER.register(new Telekinesis());
 		PlayerBlockBreakEvents.BEFORE.register(new TelekinesisBlockBreak());
 		ServerEntityEvents.ENTITY_LOAD.register(new TelekinesisItemDrop());
@@ -49,7 +50,9 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 
 		ModMessages.registerC2SPackets();
 
-		Registry.register(Registries.ENCHANTMENT, new Identifier("joosemod", "experience"), new ExperienceEnchantment
+		Registry.register(Registries.ENCHANTMENT, experienceIdentifier, new ExperienceEnchantment
 				(Enchantment.Rarity.UNCOMMON, EnchantmentTarget.DIGGER, new EquipmentSlot[] {EquipmentSlot.MAINHAND} ));
+		Registry.register(Registries.ENCHANTMENT, masteryIdentifier, new MasteryEnchantment
+				(Enchantment.Rarity.UNCOMMON, EnchantmentTarget.WEAPON, new EquipmentSlot[] {EquipmentSlot.MAINHAND} ));
 	}
 }

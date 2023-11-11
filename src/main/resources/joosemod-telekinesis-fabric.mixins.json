@@ -3,8 +3,9 @@
 	"package": "net.joosemann.telekinesis.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"ModEntityDataSaverMixin"
-	],
+      "ExperienceDropMixin",
+      "ModEntityDataSaverMixin"
+    ],
 	"injectors": {
 		"defaultRequire": 1
 	}
