@@ -16,8 +16,6 @@ public class PlayerLoginSetTelekinesis implements ServerPlayConnectionEvents.Joi
 
         JooseModTelekinesisFabric.telekinesisData = ((IEntityDataSaver) handler.player).getTelekinesisData();
 
-        JooseModTelekinesisFabric.LOGGER.info("SERVER: Telekinesis Data: " + JooseModTelekinesisFabric.telekinesisData);
-
         KeyInputHandler.telekinesisIsActive = JooseModTelekinesisFabric.telekinesisData;
 
         /*
