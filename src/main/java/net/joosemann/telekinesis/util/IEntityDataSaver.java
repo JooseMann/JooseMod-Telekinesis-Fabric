@@ -1,7 +1,10 @@
 package net.joosemann.telekinesis.util;
 
-import net.minecraft.nbt.NbtCompound;
-
 public interface IEntityDataSaver {
-    NbtCompound getPersistentData();
+
+    // See PlayerEntityMixin for implementation details
+
+    boolean getTelekinesisData();
+
+    void flipTelekinesisData();
 }

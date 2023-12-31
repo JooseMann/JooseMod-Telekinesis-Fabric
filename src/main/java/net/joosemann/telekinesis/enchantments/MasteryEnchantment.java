@@ -5,6 +5,7 @@ import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
 
 public class MasteryEnchantment extends Enchantment {
+    // Mastery enchantment setup
     public MasteryEnchantment(Rarity weight, EnchantmentTarget target, EquipmentSlot[] slotTypes) {
         super(weight, target, slotTypes);
     }

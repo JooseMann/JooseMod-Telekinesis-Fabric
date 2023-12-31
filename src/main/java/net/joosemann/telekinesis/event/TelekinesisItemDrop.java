@@ -6,9 +6,29 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 
+//@Environment(EnvType.SERVER)
 public class TelekinesisItemDrop implements ServerEntityEvents.Load {
+
     @Override
     public void onLoad(Entity entity, ServerWorld world) {
+        /*if (entity instanceof ItemEntity itemEntity && TelekinesisBlockBreak.blockBroken) {
+            List<ItemStack> itemStacks = TelekinesisBlockBreak.itemStackList;
+
+            System.out.println(itemStacks.size());
+
+            for (int i = 0; i <= itemStacks.size(); i++) {
+                ItemStack item = itemStacks.get(i);
+
+                System.out.println(item);
+
+                if (item != null && TelekinesisBlockBreak.shouldDropItem) {
+                    itemEntity.remove(Entity.RemovalReason.KILLED);
+                }
+            }
+        }
+
+        TelekinesisBlockBreak.blockBroken = false;
+        TelekinesisBlockBreak.shouldDropItem = false;*/
 
         // If a block was just broken, then see if the item should be dropped or not
         if (entity instanceof ItemEntity itemEntity && TelekinesisBlockBreak.blockBroken) {

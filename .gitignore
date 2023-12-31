@@ -42,4 +42,7 @@ replay_*.log
 # Other stuff
 
 *.zip
+*.gitignore
+.github/
+OLD_*.java
 

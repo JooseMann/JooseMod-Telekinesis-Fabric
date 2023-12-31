@@ -12,13 +12,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
 public class AttackEntityHandler implements ServerEntityCombatEvents.AfterKilledOtherEntity {
-    /*@Override
-    public ActionResult interact(PlayerEntity player, World world, Hand hand, Entity entity, @Nullable EntityHitResult hitResult) {
-        if (entity instanceof SheepEntity && !world.isClient) {
-            player.sendMessage(Text.literal("Hurt a sheep!"));
-        }
-        return ActionResult.PASS;
-    }*/
 
     @Override
     public void afterKilledOtherEntity(ServerWorld world, Entity entity, LivingEntity killedEntity) {

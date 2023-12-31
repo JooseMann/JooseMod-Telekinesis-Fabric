@@ -1,12 +1,13 @@
 {
-	"required": true,
-	"package": "net.joosemann.telekinesis.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-      "ExperienceDropMixin",
-      "ModEntityDataSaverMixin"
-    ],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "net.joosemann.telekinesis.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ExperienceDropMixin",
+    "ModEntityDataSaverMixin",
+    "PlayerEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

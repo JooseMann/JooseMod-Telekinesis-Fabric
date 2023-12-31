@@ -6,6 +6,7 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
 
 public class ExperienceEnchantment extends Enchantment {
+    // Experience enchantment setup
     public ExperienceEnchantment(Rarity weight, EnchantmentTarget target, EquipmentSlot[] slotTypes) {
         super(weight, target, slotTypes);
     }

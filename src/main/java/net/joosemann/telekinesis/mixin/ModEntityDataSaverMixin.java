@@ -13,20 +13,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ModEntityDataSaverMixin implements IEntityDataSaver {
     private NbtCompound persistentData;
 
-    @Override
-    public NbtCompound getPersistentData() {
-        // Initialize persistentData if it is not already
-        if (this.persistentData == null) {
-            this.persistentData = new NbtCompound();
-        }
-        return persistentData;
-    }
-
     @Inject(method = "writeNbt", at = @At("HEAD"))
     protected void injectWriteMethod(NbtCompound nbt, CallbackInfoReturnable info) {
         // Write custom nbt data into persistentData
         if (persistentData != null) {
-            nbt.put("telekinesis.joosemann_data", persistentData);
+            // nbt.put("telekinesis.joosemann_data", persistentData);
+            if (persistentData.getBoolean("telekinesis.joosemann_data")) {
+                persistentData.remove("telekinesis.joosemann_data");
+            }
+            else {
+                persistentData.putBoolean("telekinesis.joosemann_data", true);
+            }
         }
     }
 

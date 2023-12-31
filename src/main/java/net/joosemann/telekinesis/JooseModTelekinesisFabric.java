@@ -11,7 +11,7 @@ import net.joosemann.telekinesis.event.AttackEntityHandler;
 import net.joosemann.telekinesis.event.PlayerLoginSetTelekinesis;
 import net.joosemann.telekinesis.event.TelekinesisBlockBreak;
 import net.joosemann.telekinesis.event.TelekinesisItemDrop;
-import net.joosemann.telekinesis.networking.ModMessages;
+import net.joosemann.telekinesis.networking.handlers.TelekinesisTogglePacketHandler;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
@@ -24,9 +24,14 @@ import org.slf4j.LoggerFactory;
 public class JooseModTelekinesisFabric implements ModInitializer {
 
 	public static final String MOD_ID = "joosemod-telekinesis-fabric";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+	// Identifiers for the enchantments: used to set them up and get them later.
 	public static Identifier experienceIdentifier = new Identifier("joosemod", "experience");
 	public static Identifier masteryIdentifier = new Identifier("joosemod", "mastery");
+
+	// Public version of the telekinesisData in PlayerEntityMixin. Used when a player is not available to check for it directly with
+	public static boolean telekinesisData = false;
 
 	@Override
 	public void onInitialize() {
@@ -38,17 +43,17 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 
 		// Initialize Events
 		ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(new AttackEntityHandler());
-		PlayerBlockBreakEvents.BEFORE.register(new TelekinesisBlockBreak());
-		ServerEntityEvents.ENTITY_LOAD.register(new TelekinesisItemDrop());
 		ServerPlayConnectionEvents.JOIN.register(new PlayerLoginSetTelekinesis());
+		ServerEntityEvents.ENTITY_LOAD.register(new TelekinesisItemDrop());
+		PlayerBlockBreakEvents.BEFORE.register(new TelekinesisBlockBreak());
 
-		// Initialize C2S packets
-		ModMessages.registerC2SPackets();
+		// Initialize packets
+		TelekinesisTogglePacketHandler.register();
 
 		// Register custom enchantments
 		Registry.register(Registries.ENCHANTMENT, experienceIdentifier, new ExperienceEnchantment
-				(Enchantment.Rarity.UNCOMMON, EnchantmentTarget.DIGGER, new EquipmentSlot[] {EquipmentSlot.MAINHAND} ));
+				(Enchantment.Rarity.UNCOMMON, EnchantmentTarget.DIGGER, new EquipmentSlot[]{EquipmentSlot.MAINHAND}));
 		Registry.register(Registries.ENCHANTMENT, masteryIdentifier, new MasteryEnchantment
-				(Enchantment.Rarity.UNCOMMON, EnchantmentTarget.WEAPON, new EquipmentSlot[] {EquipmentSlot.MAINHAND} ));
+				(Enchantment.Rarity.UNCOMMON, EnchantmentTarget.WEAPON, new EquipmentSlot[]{EquipmentSlot.MAINHAND}));
 	}
 }
