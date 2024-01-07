@@ -17,6 +17,7 @@ public class AttackEntityHandler implements ServerEntityCombatEvents.AfterKilled
     public void afterKilledOtherEntity(ServerWorld world, Entity entity, LivingEntity killedEntity) {
         // If the player's weapon has the mastery enchantment, add a few experience orbs
         if (entity instanceof PlayerEntity player) {
+
             // Get the level of the enchantment, if there is none, then returns 0
             int enchantmentLevel = EnchantmentHelper.getLevel
                     (Registries.ENCHANTMENT.get(JooseModTelekinesisFabric.masteryIdentifier), player.getMainHandStack());

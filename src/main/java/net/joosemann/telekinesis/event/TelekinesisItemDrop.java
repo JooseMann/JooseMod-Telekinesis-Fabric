@@ -6,32 +6,24 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 
-//@Environment(EnvType.SERVER)
+import java.util.Objects;
+
 public class TelekinesisItemDrop implements ServerEntityEvents.Load {
+
+    // The item name of the item that was dropped before the current event. Used to tell if a block is being dropped more than once (or if there are multiple items being dropped at once).
+    public static String oldItemName;
 
     @Override
     public void onLoad(Entity entity, ServerWorld world) {
-        /*if (entity instanceof ItemEntity itemEntity && TelekinesisBlockBreak.blockBroken) {
-            List<ItemStack> itemStacks = TelekinesisBlockBreak.itemStackList;
 
-            System.out.println(itemStacks.size());
+        // If the entity is an ItemEntity, then we need to see if a block was broken or if it just spawned in naturally
+        if (entity instanceof ItemEntity itemEntity) {
 
-            for (int i = 0; i <= itemStacks.size(); i++) {
-                ItemStack item = itemStacks.get(i);
+            // If a block was just broken, then see if the item should be dropped or not
+            if (!TelekinesisBlockBreak.blockBroken) { return; }
 
-                System.out.println(item);
-
-                if (item != null && TelekinesisBlockBreak.shouldDropItem) {
-                    itemEntity.remove(Entity.RemovalReason.KILLED);
-                }
-            }
-        }
-
-        TelekinesisBlockBreak.blockBroken = false;
-        TelekinesisBlockBreak.shouldDropItem = false;*/
-
-        // If a block was just broken, then see if the item should be dropped or not
-        if (entity instanceof ItemEntity itemEntity && TelekinesisBlockBreak.blockBroken) {
+            // The name of the item, stored so that we can see if multiple items are being dropped at once
+            oldItemName = itemEntity.getName().getString();
 
             ItemStack item = itemEntity.getStack();
 
@@ -40,10 +32,16 @@ public class TelekinesisItemDrop implements ServerEntityEvents.Load {
             if (item != null && !TelekinesisBlockBreak.shouldDropItem) {
                 itemEntity.remove(Entity.RemovalReason.KILLED);
             }
+
+            // If the item was the same as the last one, then we run the code again until it is not.
+            TelekinesisBlockBreak.blockBroken = Objects.equals(oldItemName, itemEntity.getName().getString());
+        }
+        else {
+            // Otherwise, just set it false to reset the cycle.
+            TelekinesisBlockBreak.blockBroken = false;
         }
 
-        // Reset the variables to false so that it works again next time
-        TelekinesisBlockBreak.blockBroken = false;
+        // Reset the variable to false so that it works again next time
         TelekinesisBlockBreak.shouldDropItem = false;
     }
 }
