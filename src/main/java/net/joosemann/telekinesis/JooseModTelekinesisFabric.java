@@ -2,15 +2,13 @@ package net.joosemann.telekinesis;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerEntityCombatEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.joosemann.telekinesis.enchantments.ExperienceEnchantment;
 import net.joosemann.telekinesis.enchantments.MasteryEnchantment;
-import net.joosemann.telekinesis.event.AttackEntityHandler;
-import net.joosemann.telekinesis.event.PlayerLoginSetTelekinesis;
-import net.joosemann.telekinesis.event.TelekinesisBlockBreak;
-import net.joosemann.telekinesis.event.TelekinesisItemDrop;
+import net.joosemann.telekinesis.event.*;
 import net.joosemann.telekinesis.networking.handlers.TelekinesisTogglePacketHandler;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
@@ -46,6 +44,7 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register(new PlayerLoginSetTelekinesis());
 		ServerEntityEvents.ENTITY_LOAD.register(new TelekinesisItemDrop());
 		PlayerBlockBreakEvents.BEFORE.register(new TelekinesisBlockBreak());
+		ServerPlayerEvents.AFTER_RESPAWN.register(new SetTelekinesisOnRespawn());
 
 		// Initialize packets
 		TelekinesisTogglePacketHandler.register();

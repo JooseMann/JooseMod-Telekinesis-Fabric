@@ -3,8 +3,8 @@ package net.joosemann.telekinesis.event;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.joosemann.telekinesis.util.IEntityDataSaver;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContextParameterSet;
@@ -15,27 +15,24 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TelekinesisBlockBreak implements PlayerBlockBreakEvents.Before {
 
     public static boolean shouldDropItem = false;
     public static boolean blockBroken = false;
+    public static List<ItemStack> itemStacks = new ArrayList<ItemStack>();
 
     @Override
     public boolean beforeBlockBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity) {
-
-        // Return if the block is a chest, because I don't believe there is a way to give all the chest's contents to the player
-        if (state.getBlock() == Blocks.CHEST || state.getBlock() == Blocks.TRAPPED_CHEST) {
-            return true;
-        }
 
         // The context of the block being broken, so that all items will be dropped (not just the possible drops once)
         LootContextParameterSet.Builder context = new LootContextParameterSet.Builder((ServerWorld) world)
                 .add(LootContextParameters.ORIGIN, Vec3d.of(pos)).add(LootContextParameters.TOOL, player.getMainHandStack());
 
         // List of all items that are dropped by the blocks
-        List<ItemStack> itemStacks = state.getDroppedStacks(context);
+        itemStacks = state.getDroppedStacks(context);
 
         // Logic for Telekinesis
 
@@ -56,12 +53,22 @@ public class TelekinesisBlockBreak implements PlayerBlockBreakEvents.Before {
             int matchingSlot = player.getInventory().getOccupiedSlotWithRoomForStack(itemStack);
 
             // If there is a matching slot to put the itemStack into, then do so
-            // NOTE: This uses a local variable that is not preserved between sessions, may cause a bug where telekinesis gets desynced...?
             if (matchingSlot != -1) {
+                // Find the ItemEntity that is dropped from the block. Since the ItemStack is the same, it corresponds to the ItemEntity
+                ItemEntity itemEntity = new ItemEntity(world, player.getX(), player.getY(), player.getZ(), itemStack);
+
+                // Delete the item and add it to the player's inventory
+                TelekinesisItemDrop.deleteItem(itemEntity);
+
                 player.getInventory().insertStack(matchingSlot, itemStack);
             }
             // Otherwise, if there's an open spot, then just go there
             else if (player.getInventory().getEmptySlot() != -1) {
+                // Same as with matchingSlot, finding the ItemEntity that corresponds to the ItemStack and deleting it, before adding it to the player's inventory.
+                ItemEntity itemEntity = new ItemEntity(world, player.getX(), player.getY(), player.getZ(), itemStack);
+
+                TelekinesisItemDrop.deleteItem(itemEntity);
+
                 player.getInventory().insertStack(player.getInventory().getEmptySlot(), itemStack);
             }
             // Finally, if the inventory is full then just drop the item like normal

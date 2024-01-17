@@ -1,9 +1,9 @@
 package net.joosemann.telekinesis.event;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.joosemann.telekinesis.JooseModTelekinesisFabric;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 
 import java.util.Objects;
@@ -11,37 +11,43 @@ import java.util.Objects;
 public class TelekinesisItemDrop implements ServerEntityEvents.Load {
 
     // The item name of the item that was dropped before the current event. Used to tell if a block is being dropped more than once (or if there are multiple items being dropped at once).
-    public static String oldItemName;
+    public static String oldName = "";
+
+    // The tick count of the server. Used to test if an item is being dropped at the same tick as another (in which case, something like Vein Miner is active).
+    public static int serverTickCount = 0;
 
     @Override
     public void onLoad(Entity entity, ServerWorld world) {
 
-        // If the entity is an ItemEntity, then we need to see if a block was broken or if it just spawned in naturally
         if (entity instanceof ItemEntity itemEntity) {
+            // Get the current tick count and name of the item
+            int currentTickCount = world.getServer().getTicks();
 
-            // If a block was just broken, then see if the item should be dropped or not
-            if (!TelekinesisBlockBreak.blockBroken) { return; }
+            String currentName = itemEntity.getName().toString();
 
-            // The name of the item, stored so that we can see if multiple items are being dropped at once
-            oldItemName = itemEntity.getName().getString();
+            // Return if telekinesis is disabled
+            if (!JooseModTelekinesisFabric.telekinesisData) { return; }
 
-            ItemStack item = itemEntity.getStack();
-
-            // If the item should not be dropped, then just kill it
-            // See TelekinesisBlockBreak for details on how shouldDropItem is set.
-            if (item != null && !TelekinesisBlockBreak.shouldDropItem) {
-                itemEntity.remove(Entity.RemovalReason.KILLED);
+            /* Assuming that Telekinesis is enabled, remove the item if:
+            * A block was just broken (one at a time), and the inventory of the player is not full, OR
+            * Multiple blocks were broken on the same tick and have the same name.
+            * */
+            if ((TelekinesisBlockBreak.blockBroken && !TelekinesisBlockBreak.shouldDropItem) || (serverTickCount == currentTickCount && Objects.equals(currentName, oldName))) {
+                deleteItem(itemEntity);
             }
 
-            // If the item was the same as the last one, then we run the code again until it is not.
-            TelekinesisBlockBreak.blockBroken = Objects.equals(oldItemName, itemEntity.getName().getString());
-        }
-        else {
-            // Otherwise, just set it false to reset the cycle.
-            TelekinesisBlockBreak.blockBroken = false;
+            // Update the "old" counters for the next use
+            serverTickCount = world.getServer().getTicks();
+            oldName = itemEntity.getName().toString();
         }
 
-        // Reset the variable to false so that it works again next time
+        // Reset the variables that allow for one block to be broken successfully for the next use
+        TelekinesisBlockBreak.blockBroken = false;
         TelekinesisBlockBreak.shouldDropItem = false;
+    }
+
+    // Delete the itemEntity from the world.
+    public static void deleteItem(ItemEntity itemEntity) {
+        itemEntity.remove(Entity.RemovalReason.KILLED);
     }
 }
