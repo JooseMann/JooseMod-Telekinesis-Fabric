@@ -17,6 +17,5 @@ public class SetTelekinesisOnRespawn implements ServerPlayerEvents.AfterRespawn 
 
         JooseModTelekinesisFabric.telekinesisData = iPlayer.getTelekinesisData();
         KeyInputHandler.telekinesisIsActive = false;
-        System.out.println(JooseModTelekinesisFabric.telekinesisData);
     }
 }
