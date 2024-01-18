@@ -15,9 +15,13 @@ import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class JooseModTelekinesisFabric implements ModInitializer {
 
@@ -31,6 +35,9 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 	// Public version of the telekinesisData in PlayerEntityMixin. Used when a player is not available to check for it directly with
 	public static boolean telekinesisData = false;
 
+	// List of all players. Updated in PlayerLoginSetVariables when a player logs in. Used in TelekinesisItemDrop to see if a specific player killed a mob with telekinesis active.
+	public static List<ServerPlayerEntity> players = new ArrayList<>();
+
 	@Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -41,7 +48,7 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 
 		// Initialize Events
 		ServerEntityCombatEvents.AFTER_KILLED_OTHER_ENTITY.register(new AttackEntityHandler());
-		ServerPlayConnectionEvents.JOIN.register(new PlayerLoginSetTelekinesis());
+		ServerPlayConnectionEvents.JOIN.register(new PlayerLoginSetVariables());
 		ServerEntityEvents.ENTITY_LOAD.register(new TelekinesisItemDrop());
 		PlayerBlockBreakEvents.BEFORE.register(new TelekinesisBlockBreak());
 		ServerPlayerEvents.AFTER_RESPAWN.register(new SetTelekinesisOnRespawn());

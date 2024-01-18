@@ -11,12 +11,23 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 public class AttackEntityHandler implements ServerEntityCombatEvents.AfterKilledOtherEntity {
+
+    public static HashMap<UUID, Boolean> playerAttackHashMap = new HashMap<>();
+    public static boolean shouldEntityDropItem = false;
+    public static boolean enemyKilled = false;
 
     @Override
     public void afterKilledOtherEntity(ServerWorld world, Entity entity, LivingEntity killedEntity) {
         // If the player's weapon has the mastery enchantment, add a few experience orbs
         if (entity instanceof PlayerEntity player) {
+
+            // Put the player's UUID in the HashMap, so that it can be used to see whether a specific player killed an entity when an item is dropped.
+            // This is so that, if the former statement is true, telekinesis will take effect. See TelekinesisItemDrop for more information
+            playerAttackHashMap.put(player.getUuid(), true);
 
             // Get the level of the enchantment, if there is none, then returns 0
             int enchantmentLevel = EnchantmentHelper.getLevel
