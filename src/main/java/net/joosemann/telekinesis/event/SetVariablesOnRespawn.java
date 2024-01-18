@@ -6,7 +6,7 @@ import net.joosemann.telekinesis.util.IEntityDataSaver;
 import net.joosemann.telekinesis.util.KeyInputHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public class SetTelekinesisOnRespawn implements ServerPlayerEvents.AfterRespawn {
+public class SetVariablesOnRespawn implements ServerPlayerEvents.AfterRespawn {
     @Override
     public void afterRespawn(ServerPlayerEntity oldPlayer, ServerPlayerEntity newPlayer, boolean alive) {
 
@@ -17,5 +17,9 @@ public class SetTelekinesisOnRespawn implements ServerPlayerEvents.AfterRespawn 
 
         JooseModTelekinesisFabric.telekinesisData = iPlayer.getTelekinesisData();
         KeyInputHandler.telekinesisIsActive = false;
+
+        // Update the list of players, whenever one joins
+        JooseModTelekinesisFabric.players.remove(oldPlayer);
+        JooseModTelekinesisFabric.players.add(newPlayer);
     }
 }

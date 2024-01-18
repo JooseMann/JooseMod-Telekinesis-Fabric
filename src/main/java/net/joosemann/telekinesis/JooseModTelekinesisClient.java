@@ -4,6 +4,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.joosemann.telekinesis.client.TelekinesisHudOverlay;
+import net.joosemann.telekinesis.event.AttackEntityHandler;
 import net.joosemann.telekinesis.networking.packet.TelekinesisTogglePacket;
 import net.joosemann.telekinesis.util.KeyInputHandler;
 import net.minecraft.util.Identifier;
@@ -34,6 +35,16 @@ public class JooseModTelekinesisClient implements ClientModInitializer {
                 KeyInputHandler.telekinesisIsActive = !KeyInputHandler.telekinesisIsActive;
             });
         });
+
+        // Update Player HashMap Event (AttackEntityHandler)
+        ClientPlayNetworking.registerGlobalReceiver(JooseModTelekinesisFabric.attackTelekinesisIdentifier, ((client, handler, buf, responseSender) -> {
+            if (client.player == null) { return; }
+            client.execute(() -> {
+
+                // Update playerAttackHashMap on the client (allows for telekinesis for mob drops to occur on multiplayer servers)
+                AttackEntityHandler.playerAttackHashMap.put(client.player.getUuid(), true);
+            });
+        }));
     }
 
     public static void sendTelekinesisPacket() {

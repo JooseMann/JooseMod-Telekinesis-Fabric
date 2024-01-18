@@ -6,10 +6,12 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.joosemann.telekinesis.enchantments.ExperienceEnchantment;
 import net.joosemann.telekinesis.enchantments.MasteryEnchantment;
 import net.joosemann.telekinesis.event.*;
 import net.joosemann.telekinesis.networking.handlers.TelekinesisTogglePacketHandler;
+import net.joosemann.telekinesis.networking.packet.AttackTelekinesisPacket;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
@@ -38,6 +40,8 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 	// List of all players. Updated in PlayerLoginSetVariables when a player logs in. Used in TelekinesisItemDrop to see if a specific player killed a mob with telekinesis active.
 	public static List<ServerPlayerEntity> players = new ArrayList<>();
 
+	public static Identifier attackTelekinesisIdentifier = new Identifier(JooseModTelekinesisFabric.MOD_ID, "attack-telekinesis");
+
 	@Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -51,7 +55,7 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 		ServerPlayConnectionEvents.JOIN.register(new PlayerLoginSetVariables());
 		ServerEntityEvents.ENTITY_LOAD.register(new TelekinesisItemDrop());
 		PlayerBlockBreakEvents.BEFORE.register(new TelekinesisBlockBreak());
-		ServerPlayerEvents.AFTER_RESPAWN.register(new SetTelekinesisOnRespawn());
+		ServerPlayerEvents.AFTER_RESPAWN.register(new SetVariablesOnRespawn());
 
 		// Initialize packets
 		TelekinesisTogglePacketHandler.register();
@@ -61,5 +65,10 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 				(Enchantment.Rarity.UNCOMMON, EnchantmentTarget.DIGGER, new EquipmentSlot[]{EquipmentSlot.MAINHAND}));
 		Registry.register(Registries.ENCHANTMENT, masteryIdentifier, new MasteryEnchantment
 				(Enchantment.Rarity.UNCOMMON, EnchantmentTarget.WEAPON, new EquipmentSlot[]{EquipmentSlot.MAINHAND}));
+	}
+
+	public static void sendAttackTelekinesisPacket(ServerPlayerEntity player) {
+		// Send a packet to the client to update the HashMap that contains the player that killed a mob, allowing telekinesis to occur
+		ServerPlayNetworking.send(player, attackTelekinesisIdentifier, AttackTelekinesisPacket.createPacket());
 	}
 }

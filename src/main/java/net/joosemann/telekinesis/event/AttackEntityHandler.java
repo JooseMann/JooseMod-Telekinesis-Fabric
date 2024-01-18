@@ -8,6 +8,7 @@ import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registries;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec3d;
 
@@ -25,9 +26,14 @@ public class AttackEntityHandler implements ServerEntityCombatEvents.AfterKilled
         // If the player's weapon has the mastery enchantment, add a few experience orbs
         if (entity instanceof PlayerEntity player) {
 
+            if (!(entity instanceof ServerPlayerEntity)) { JooseModTelekinesisFabric.LOGGER.error("Player is not an instance of ServerPlayerEntity."); return;}
+
             // Put the player's UUID in the HashMap, so that it can be used to see whether a specific player killed an entity when an item is dropped.
             // This is so that, if the former statement is true, telekinesis will take effect. See TelekinesisItemDrop for more information
             playerAttackHashMap.put(player.getUuid(), true);
+
+            // This part is to ensure that telekinesis works on a multiplayer server, too
+            JooseModTelekinesisFabric.sendAttackTelekinesisPacket((ServerPlayerEntity) entity);
 
             // Get the level of the enchantment, if there is none, then returns 0
             int enchantmentLevel = EnchantmentHelper.getLevel
