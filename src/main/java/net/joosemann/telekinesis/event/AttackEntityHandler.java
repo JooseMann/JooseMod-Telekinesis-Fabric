@@ -20,13 +20,18 @@ public class AttackEntityHandler implements ServerEntityCombatEvents.AfterKilled
     public static HashMap<UUID, Boolean> playerAttackHashMap = new HashMap<>();
     public static boolean shouldEntityDropItem = false;
     public static boolean enemyKilled = false;
+    public static boolean causedByPlayer = false;
+
 
     @Override
     public void afterKilledOtherEntity(ServerWorld world, Entity entity, LivingEntity killedEntity) {
         // If the player's weapon has the mastery enchantment, add a few experience orbs
         if (entity instanceof PlayerEntity player) {
 
-            if (!(entity instanceof ServerPlayerEntity)) { JooseModTelekinesisFabric.LOGGER.error("Player is not an instance of ServerPlayerEntity."); return;}
+            if (!(entity instanceof ServerPlayerEntity)) { return; }
+
+            // Used for AttackEntityPreventLootSpawnMixin, in order to determine if an entity that was just killed was killed by the player.
+            causedByPlayer = true;
 
             // Put the player's UUID in the HashMap, so that it can be used to see whether a specific player killed an entity when an item is dropped.
             // This is so that, if the former statement is true, telekinesis will take effect. See TelekinesisItemDrop for more information

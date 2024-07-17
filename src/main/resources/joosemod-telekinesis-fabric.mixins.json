@@ -3,6 +3,8 @@
   "package": "net.joosemann.telekinesis.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AttackEntityItemMixin",
+    "AttackEntityPreventLootSpawnMixin",
     "ExperienceDropMixin",
     "ModEntityDataSaverMixin",
     "PlayerEntityMixin"

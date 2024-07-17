@@ -7,7 +7,9 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class TelekinesisItemDrop implements ServerEntityEvents.Load {
@@ -18,6 +20,10 @@ public class TelekinesisItemDrop implements ServerEntityEvents.Load {
     // The tick count of the server. Used to test if an item is being dropped at the same tick as another (in which case, something like Vein Miner is active).
     public static int serverTickCount = 0;
 
+    public static List<ItemStack> itemsToDrop = new ArrayList<>();
+
+    private static int itemsLeftToDelete = 0;
+
     @Override
     public void onLoad(Entity entity, ServerWorld world) {
 
@@ -26,6 +32,10 @@ public class TelekinesisItemDrop implements ServerEntityEvents.Load {
             int currentTickCount = world.getServer().getTicks();
 
             String currentName = itemEntity.getName().toString();
+
+            if (itemsLeftToDelete <= 0) {
+                itemsLeftToDelete = TelekinesisBlockBreak.itemStacks.size();
+            }
 
             // Return if telekinesis is disabled
             if (!JooseModTelekinesisFabric.telekinesisData) { return; }
@@ -41,28 +51,14 @@ public class TelekinesisItemDrop implements ServerEntityEvents.Load {
                 // If a mob was just killed, teleport the item to the player
                 JooseModTelekinesisFabric.players.forEach(player -> {
                     // Only allow telekinesis for the player that killed the mob (see AttackEntityHandler for details on how playerAttackHashMap is set)
+
                     if (AttackEntityHandler.playerAttackHashMap.containsKey(player.getUuid())) {
                         AttackEntityHandler.enemyKilled = true;
 
-                        ItemStack itemStack = itemEntity.getStack();
-
-                        int matchingSlot = player.getInventory().getOccupiedSlotWithRoomForStack(itemStack);
-
-                        // If there is a matching slot to put the itemStack into, then do so
-                        if (matchingSlot != -1) {
-                            player.getInventory().insertStack(matchingSlot, itemStack);
-                        }
-                        // Otherwise, if there's an open spot, then just go there
-                        else if (player.getInventory().getEmptySlot() != -1) {
-                            player.getInventory().insertStack(player.getInventory().getEmptySlot(), itemStack);
-                        }
-                        // Finally, if the inventory is full then just drop the item like normal
-                        else {
-                            AttackEntityHandler.shouldEntityDropItem = true;
-                        }
+                        deleteItem(itemEntity);
                     }
                 });
-                if ((AttackEntityHandler.enemyKilled && !AttackEntityHandler.shouldEntityDropItem) || (serverTickCount == currentTickCount && Objects.equals(currentName, oldName))) {
+                if ((AttackEntityHandler.enemyKilled && !AttackEntityHandler.shouldEntityDropItem)) { //|| (serverTickCount == currentTickCount && Objects.equals(currentName, oldName))) {
                     deleteItem(itemEntity);
                 }
             }
@@ -73,7 +69,13 @@ public class TelekinesisItemDrop implements ServerEntityEvents.Load {
         }
 
         // Reset the variables that allow for one block to be broken successfully for the next use
-        TelekinesisBlockBreak.blockBroken = false;
+
+        // Telekinesis.blockBroken may need to run multiple times for an event such as breaking sugar cane, so if there are more items left to delete, allow them to be deleted.
+        itemsLeftToDelete--;
+
+        TelekinesisBlockBreak.blockBroken = itemsLeftToDelete > 0;
+
+        // All other variables get reset here
         TelekinesisBlockBreak.shouldDropItem = false;
         AttackEntityHandler.enemyKilled = false;
         AttackEntityHandler.shouldEntityDropItem = false;

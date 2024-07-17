@@ -12,6 +12,7 @@ import net.joosemann.telekinesis.enchantments.MasteryEnchantment;
 import net.joosemann.telekinesis.event.*;
 import net.joosemann.telekinesis.networking.handlers.TelekinesisTogglePacketHandler;
 import net.joosemann.telekinesis.networking.packet.AttackTelekinesisPacket;
+import net.joosemann.telekinesis.util.AttackEntityItemCallback;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
@@ -56,6 +57,7 @@ public class JooseModTelekinesisFabric implements ModInitializer {
 		ServerEntityEvents.ENTITY_LOAD.register(new TelekinesisItemDrop());
 		PlayerBlockBreakEvents.BEFORE.register(new TelekinesisBlockBreak());
 		ServerPlayerEvents.AFTER_RESPAWN.register(new SetVariablesOnRespawn());
+		AttackEntityItemCallback.EVENT.register(new AttackEntityItemHandler());
 
 		// Initialize packets
 		TelekinesisTogglePacketHandler.register();
